@@ -1,6 +1,6 @@
 img = imread('Lena.bmp');
 [rows, cols, rgb] = size(img);
-feat = input("feature, 1 hist; 2 enhance; 3 histeq\n");
+feat = input("feature, 1 hist; 2 enhance; 3 histeq; 4 histspec\n");
 if feat == 1
     type = input("0/1\n");
     [xax, imghist] = proccHistogram(img,rows,cols,type);
@@ -8,14 +8,20 @@ if feat == 1
 elseif feat == 2
     type = input("type=\n");
     newimg = enhImage(img,rows,cols,type);
-else
+elseif feat == 3
     type = input("0/1\n");
     [xax, imghist] = proccHistogram(img,rows,cols,type);
-    newhist = equalizeHistogram(imghist, rows, cols);
+    figure; imshow(img);
+    newimg = equalizeHistogram(img, imghist, rows, cols);
+    figure; imshow(newimg);
+    [xax, imghist] = proccHistogram(newimg,rows,cols,type);
     showHistogram(xax, imghist,type);
-    showHistogram(xax, newhist,type);
     bcd = histeq(img);
+    figure; imshow(img);
     figure; imhist(bcd);
+elseif feat==4
+    newimg = specificationHistogram(img, rows, cols);
+
 end
 
 
@@ -124,46 +130,54 @@ function newimg = enhImage(img,rows,cols,type)
     end
 end
 
-function newhist = equalizeHistogram(imghist, rows, cols)
+% todo blom bener keknya au dah
+function newimg = equalizeHistogram(img, imghist, rows, cols)
     inc = 0;
     newxax = 1:256;
     for i=1:256
         inc = inc + imghist(1,i);
         newxax(1,i) = (inc/(rows*cols))*256;
     end
-    temphist = zeros(1,length(unique(newxax)));
-    temp = 0;
-    id = 1;
-    for i=2:256
-        if newxax(1,i)==newxax(1,i-1)
-            temp = temp + imghist(1,i);
-        else
-            temp = temp + imghist(1,i);
-            temphist(1,id) = temp;
-            id = id + 1;
-            temp = 0;
+    newxax = int64(newxax);
+    newimg = img;
+    for c = 1:cols
+        for r = 1:rows
+            newimg(r,c) = newxax(1,newimg(r,c));
         end
     end
-    newxax = unique(int64(newxax));
-    newhist = zeros(1,256);
-    id = 1;
-    disp(length(newxax));
+end
+
+function newimg = specificationHistogram(img, rows, cols)
+    inc = 0;
+    newxax = 1:256;
     for i=1:256
-        if newxax(1,id)==i-1
-            newhist(1,i) = temphist(1,id);
-            id = id + 1;
+        inc = inc + imghist(1,i);
+        newxax(1,i) = (inc/(rows*cols))*256;
+    end
+    newxax = int64(newxax);
+    
+    imgspec = imread('bird.bmp');
+    [xax, imghist1] = proccHistogram(img,rows,cols,type);
+    inc = 0;
+    newxax1 = 1:256;
+    for i=1:256
+        inc = inc + imghist1(1,i);
+        newxax1(1,i) = (inc/(rows*cols))*256;
+    end
+    newxax1 = int64(newxax1);
+    newimg = img;
+    
+    invhist = 1:256;
+    for i = 1:cols
+        minval = abs(newxax(1,i) - newxax1(1,1));
+        minj = 0;
+        for j = 1:256
+            if abs(newxax(1,i) - newxax1(1,j))<minval
+                minval = abs(newxax(1,i) - newxax1(1,j));
+                minj = j;
+            end
+        invhist(1,i)
+            
         end
     end
-    disp(temphist);
-    disp(newhist);
-    sum = 0;
-    for i=1:length(temphist)
-        sum = sum + temphist(1,i);
-    end
-    disp(sum);
-    sum = 0;
-    for i=1:256
-        sum = sum + newhist(1,i);
-    end
-    disp(sum);
 end

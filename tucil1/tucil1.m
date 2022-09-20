@@ -1,6 +1,6 @@
 img = imread('Lena.bmp');
 [rows, cols, rgb] = size(img);
-feat = input("feature, 1 hist; 2 enhance; 3 histeq\n");
+feat = input("feature, 1 hist; 2 enhance; 3 histeq; 4 histspec\n");
 if feat == 1
     type = input("0/1\n");
     [xax, imghist] = proccHistogram(img,rows,cols,type);
@@ -8,7 +8,7 @@ if feat == 1
 elseif feat == 2
     type = input("type=\n");
     newimg = enhImage(img,rows,cols,type);
-else
+elseif feat == 3
     type = input("0/1\n");
     [xax, imghist] = proccHistogram(img,rows,cols,type);
     figure; imshow(img);
@@ -19,6 +19,13 @@ else
     bcd = histeq(img);
     figure; imshow(img);
     figure; imhist(bcd);
+elseif feat==4
+    type = input("0/1\n");
+    newimg = specificationHistogram(img, rows, cols, type);
+    figure; imshow(img);
+    figure; imshow(newimg);
+    [xax, imghist] = proccHistogram(newimg,rows,cols,type);
+    showHistogram(xax, imghist,type);
 end
 
 
@@ -127,7 +134,7 @@ function newimg = enhImage(img,rows,cols,type)
     end
 end
 
-% todo blom bener
+% todo blom bener keknya au dah
 function newimg = equalizeHistogram(img, imghist, rows, cols)
     inc = 0;
     newxax = 1:256;
@@ -139,7 +146,49 @@ function newimg = equalizeHistogram(img, imghist, rows, cols)
     newimg = img;
     for c = 1:cols
         for r = 1:rows
-            newimg(r,c) = newxax(1,newimg(r,c));
+            newimg(r,c) = newxax(1,img(r,c));
+        end
+    end
+end
+
+% allegedly ngikutin ppt, gatau dh bener apa kagak
+function newimg = specificationHistogram(img, rows, cols, type)
+    [xax, imghist] = proccHistogram(img,rows,cols,type);
+    inc = 0;
+    newxax = 1:256;
+    for i=1:256
+        inc = inc + imghist(1,i);
+        newxax(1,i) = (inc/(rows*cols))*256;
+    end
+    newxax = int64(newxax);
+    
+    imgspec = imread('bird.bmp');
+    [xax, imghist1] = proccHistogram(imgspec,rows,cols,type);
+    inc = 0;
+    newxax1 = 1:256;
+    for i=1:256
+        inc = inc + imghist1(1,i);
+        newxax1(1,i) = (inc/(rows*cols))*256;
+    end
+    newxax1 = int64(newxax1);
+    newimg = img;
+    
+    invhist = 1:256;
+    for i = 1:cols
+        minval = abs(newxax(1,i) - newxax1(1,1));
+        minj = 0;
+        for j = 1:256
+            if abs(newxax(1,i) - newxax1(1,j))<minval
+                minval = abs(newxax(1,i) - newxax1(1,j));
+                minj = j;
+            end
+        invhist(1,i) = minj;
+        end
+    end
+    
+    for c = 1:cols
+        for r = 1:rows
+            newimg(r,c) = invhist(1,img(r,c));
         end
     end
 end
