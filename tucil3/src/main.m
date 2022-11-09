@@ -6,7 +6,7 @@ sobelimg = sobel(img, 2);
 prewittimg = prewitt(img);
 robertsimg = roberts(img);
 cannyimg = canny(img);
-segmented = segmentation(cannyimg, img);
+segmented = segmentation(robertsimg, img);
 
 % figure, imshow(img);
 % figure, imshow(laplaceimg);
