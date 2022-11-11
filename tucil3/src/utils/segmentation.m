@@ -5,7 +5,7 @@ function imgout = segmentation(imgin, imgoriginal, method)
     % TODO generalize image
     linelength = 3;
     diskradius = 3;
-    if strcmp(method,'laplace') | strcmp(method,'log')
+    if strcmp(method,'laplace') || strcmp(method,'log')
         linelength = 7;
         diskradius = 4;
     elseif strcmp(method, 'roberts')
@@ -17,7 +17,7 @@ function imgout = segmentation(imgin, imgoriginal, method)
     imgin = imbinarize(imgin);
     imgsize = size(imgoriginal);
     edgesize = size(imgin);
-    if (imgsize(1)~=edgesize(1) & imgsize(2)~=edgesize(2))
+    if (imgsize(1)~=edgesize(1) && imgsize(2)~=edgesize(2))
         imgin = imgin(1:imgsize(1),1:imgsize(2));
     end
     dilated = imclearborder(imgin);
@@ -33,10 +33,10 @@ function imgout = segmentation(imgin, imgoriginal, method)
     bordercleared = imclearborder(dilated,4);
     filled = imfill(bordercleared, 'holes');
     filled = bwareaopen(filled, 4000, 8);
-    figure; imshow(imgin);
-    figure; imshow(dilated);
-    figure; imshow(bordercleared);
-    figure; imshow(filled);
+    % figure; imshow(imgin);
+    % figure; imshow(dilated);
+    % figure; imshow(bordercleared);
+    % figure; imshow(filled);
     
     
     imgout = bsxfun(@times, imgoriginal, cast(filled, 'like', imgoriginal));
