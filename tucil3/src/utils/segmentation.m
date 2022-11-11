@@ -10,9 +10,9 @@ function imgout = segmentation(imgin, imgoriginal, method)
         diskradius = 4;
     elseif strcmp(method, 'roberts')
         linelength = 6;
-    elseif strcmp(method, 'canny')
-        linelength = 1;
-        diskradius = 1;
+    % elseif strcmp(method, 'canny')
+    %     linelength = 1;
+    %     diskradius = 1;
     end
     imgin = rgb2gray(imgin);
     imgin = imbinarize(imgin);
@@ -34,10 +34,12 @@ function imgout = segmentation(imgin, imgoriginal, method)
     bordercleared = imclearborder(dilated,4);
     filled = imfill(bordercleared, 'holes');
     filled = bwareaopen(filled, 4000, 8);
+    eroded = imerode(filled,seD);
     % figure; imshow(imgin);
     % figure; imshow(dilated);
     % figure; imshow(bordercleared);
     % figure; imshow(filled);
+    % figure; imshow(eroded);
     
     
     imgout = bsxfun(@times, imgoriginal, cast(filled, 'like', imgoriginal));
