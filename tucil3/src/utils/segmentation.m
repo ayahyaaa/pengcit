@@ -14,6 +14,7 @@ function imgout = segmentation(imgin, imgoriginal, method)
         linelength = 1;
         diskradius = 1;
     end
+    imgin = rgb2gray(imgin);
     imgin = imbinarize(imgin);
     imgsize = size(imgoriginal);
     edgesize = size(imgin);
