@@ -1,4 +1,4 @@
-img = imread('img/banana.png');
+img = imread('../img/banana.png');
 
 laplaceimg = laplace(img,'normal');
 logimg = lapofgauss(img);
@@ -6,10 +6,10 @@ sobelimg = sobel(img, 2);
 prewittimg = prewitt(img);
 robertsimg = roberts(img);
 cannyimg = canny(img);
-segmented = segmentation(robertsimg, img);
+segmented = segmentation(cannyimg, img);
 
 % figure, imshow(img);
-% figure, imshow(laplaceimg);
+figure, imshow(laplaceimg);
 % figure, imshow(logimg);
 % figure, imshow(sobelimg);
 % figure, imshow(prewittimg);

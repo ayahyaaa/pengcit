@@ -5,6 +5,8 @@ function imgout = laplace(imgin, mode)
     mask = [0 2 0; 2 -8 2; 0 2 0];
     if strcmp(mode, 'gaussian')
         mask = [1 2 1; 2 -12 2; 1 2 1];
+    else 
+        mask = [0 2 0; 2 -8 2; 0 2 0];
     end
     imgout = uint8(convn(double(imgin),double(mask)));
 end
