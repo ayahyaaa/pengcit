@@ -3,6 +3,7 @@ function imgout = canny(imgin)
     % Diawali dengan melakukan penghalusan citra, kemudian memanfaatkan gradien dari operator gradien dan tresholding
     % Terdapat 2 nilai treshold sehingga dapat menemukan tepi kuat dan tepi lemah
     % Memanfaatkan fungsi bawaan matlab
-    imgout = edge(rgb2gray(imgin), 'Canny');
+    imgout = edge(imgin, 'Canny');
+    imgout = uint8(imgout);
 end
 
